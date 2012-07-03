@@ -21,6 +21,11 @@ class MapClass extends Mapper<Text, Text, Text, Text> {
     static class MovieInfo {
         public String title;
         public String released;
+
+        public MovieInfo(String title, String released) {
+            this.title = title;
+            this.released = released;
+        }
     };
 
     private static final Log LOG = LogFactory.getLog(MapClass.class);
@@ -71,13 +76,12 @@ class MapClass extends Mapper<Text, Text, Text, Text> {
                 try {
                     while ((line = joinReader.readLine()) != null) {
                         tokens = line.split(",");
-                        MovieInfo info = new MovieInfo();
-                        info.title = tokens[2];
                         try {
                             Date releaseDate = moviesDf.parse(tokens[1]);
                             calendar.setTime(releaseDate);
                             if (calendar.get(Calendar.YEAR) >= 2000) {
-                                info.released = Netflix.ratingDateFormat.format(releaseDate);
+                                MovieInfo info = new MovieInfo(tokens[2],
+                                                Netflix.ratingDateFormat.format(releaseDate));
                                 joinData.put(new Integer(tokens[0]), info);
                             }
                         } catch (ParseException e) {}
